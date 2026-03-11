@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DORMICONFORT | Tu Descanso es Nuestra Prioridad</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="description"
+        content="Especialistas en descanso. Colchones Flex, ACHE Tapizados y BILOX. Los mejores precios y la mejor calidad para tu sueño en DORMICONFORT.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://qjkgrtsepfqkixebktbv.supabase.co">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Service Worker registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => { });
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="#" class="logo">
+                <img src="assets/logo.png" alt="DORMICONFORT Logo">
+                <span class="logo-text"><span class="filled-d">D</span>ORMICONFORT</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#marcas">Marcas</a></li>
+                <li><a href="productos.html">Productos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero">
+            <div class="hero-slider">
+                <div class="hero-slide active" style="background-image: url('assets/hero-bg.png');"></div>
+                <div class="hero-slide" style="background-image: url('assets/hero-bg-3.png');"></div>
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content container">
+                <h1 class="reveal">El descanso que mereces, <br><span>la calidad que buscas.</span></h1>
+                <p class="reveal">Expertos en proporcionarte el mejor sueño con las marcas líderes del mercado.</p>
+                <div class="hero-btns reveal">
+                    <a href="productos.html?category=colchones" class="btn btn-primary">Ver Colchones</a>
+                    <a href="#contacto" class="btn btn-outline">Visítanos</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="marcas" class="brands">
+            <div class="container text-center">
+                <h2 class="section-title">Nuestras Marcas de Confianza</h2>
+            </div>
+            <div class="brands-carousel">
+                <div class="brands-track">
+                    <!-- Logo Set 1 -->
+                    <div class="brand-item"><img src="assets/flex-logo.png" alt="FLEX"></div>
+                    <div class="brand-item"><img src="assets/ache-logo.png" alt="ACHE Tapizados"></div>
+                    <div class="brand-item"><img src="assets/bilox-logo.png" alt="BILOX"></div>
+                    <div class="brand-item"><img src="assets/marmota-logo.png" alt="Marmota"></div>
+                    <div class="brand-item"><img src="assets/top-tapizados-logo.webp" alt="Top Tapizados"></div>
+                    <div class="brand-item"><img src="assets/yecol.jpg" alt="Yecol"></div>
+                    <div class="brand-item"><img src="assets/mash.png" alt="Mash"></div>
+                    <div class="brand-item"><img src="assets/dormilon.png" alt="Dormilon"></div>
+                    <!-- Logo Set 2 (Duplicated for seamless loop) -->
+                    <div class="brand-item"><img src="assets/flex-logo.png" alt="FLEX"></div>
+                    <div class="brand-item"><img src="assets/ache-logo.png" alt="ACHE Tapizados"></div>
+                    <div class="brand-item"><img src="assets/bilox-logo.png" alt="BILOX"></div>
+                    <div class="brand-item"><img src="assets/marmota-logo.png" alt="Marmota"></div>
+                    <div class="brand-item"><img src="assets/top-tapizados-logo.webp" alt="Top Tapizados"></div>
+                    <div class="brand-item"><img src="assets/yecol.jpg" alt="Yecol"></div>
+                    <div class="brand-item"><img src="assets/mash.png" alt="Mash"></div>
+                    <div class="brand-item"><img src="assets/dormilon.png" alt="Dormilon"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="productos" class="products">
+            <div class="container">
+                <h2 class="section-title text-center">Selección Destacada FLEX</h2>
+                <div style="position:relative;">
+                    <!-- Left arrow -->
+                    <button id="flex-prev"
+                        style="display:none;position:absolute;left:-20px;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border-radius:50%;border:none;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.15);cursor:pointer;font-size:1.1rem;color:var(--primary);transition:box-shadow 0.2s,transform 0.2s;align-items:center;justify-content:center;"
+                        onmouseover="this.style.boxShadow='0 6px 24px rgba(0,0,170,0.18)';this.style.transform='translateY(-50%) scale(1.08)';"
+                        onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)';this.style.transform='translateY(-50%) scale(1)';">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <!-- Scrollable track -->
+                    <div id="featured-products-grid"
+                        style="display:flex;gap:24px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;padding-bottom:12px;-ms-overflow-style:none;scrollbar-width:none;"
+                        onscroll="updateFlexArrows()">
+                        <!-- Products loaded dynamically -->
+                    </div>
+                    <!-- Right arrow -->
+                    <button id="flex-next"
+                        style="display:none;position:absolute;right:-20px;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border-radius:50%;border:none;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.15);cursor:pointer;font-size:1.1rem;color:var(--primary);transition:box-shadow 0.2s,transform 0.2s;align-items:center;justify-content:center;"
+                        onmouseover="this.style.boxShadow='0 6px 24px rgba(0,0,170,0.18)';this.style.transform='translateY(-50%) scale(1.08)';"
+                        onmouseout="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)';this.style.transform='translateY(-50%) scale(1)';">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacto" class="contact">
+            <div class="container grid-two-cols">
+                <div class="contact-info">
+                    <h2 class="section-title">Ven a visitarnos</h2>
+                    <p>Estamos aquí para ayudarte a encontrar el colchón perfecto en Miguelturra. Ven a probar nuestra
+                        exposición de Flex y otras marcas líderes.</p>
+                    <div class="contact-details">
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Calle Segadores, 56, 13170 Miguelturra, Ciudad Real</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span><a href="tel:926039141">926 03 91 41</a></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fab fa-whatsapp"></i>
+                            <span><a href="https://wa.me/34657557449">+34 657 55 74 49</a></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <span><a href="mailto:colchonplus@yahoo.es">colchonplus@yahoo.es</a></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fab fa-facebook-f"></i>
+                            <span><a href="https://www.facebook.com/flexmiguelturra1/?locale=es_ES"
+                                    target="_blank">Dormiconfort - Flex Miguelturra</a></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fab fa-instagram"></i>
+                            <span><a href="https://www.instagram.com/dormiconfort.miguelturra/"
+                                    target="_blank">@dormiconfort.miguelturra</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-map">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3106.314614275037!2d-3.8943183!3d38.962299!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd6bc303577ef3f5%3A0x6b86cfdc19f8f237!2sCalle%20Segadores%2C%2056%2C%2013170%20Miguelturra%2C%20Ciudad%20Real!5e0!3m2!1ses!2ses!4v1709635000000!5m2!1ses!2ses"
+                        width="100%" height="450" style="border:0; border-radius: 20px;" allowfullscreen=""
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pre-Footer Info Bar -->
+    <div class="pre-footer-info-bar">
+        <div class="container text-center">
+            <span class="info-text">
+                <i class="fa-solid fa-truck-fast"></i> Transporte a domicilio y montaje gratuito
+            </span>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="footer-logo">
+                <img src="assets/logo.png" alt="DORMICONFORT Logo">
+                <p><span class="logo-text footer-text"><span class="filled-d">D</span>ORMICONFORT</span> - Dormiconfort
+                    - Flex Miguelturra</p>
+            </div>
+            <div style="margin: 15px 0;">
+                <a href="privacidad.html"
+                    style="color: var(--white); text-decoration: none; margin: 0 15px; font-size: 0.9em; opacity: 0.8; transition: opacity 0.3s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Política de Privacidad</a>
+                <a href="aviso-legal.html"
+                    style="color: var(--white); text-decoration: none; margin: 0 15px; font-size: 0.9em; opacity: 0.8; transition: opacity 0.3s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Aviso Legal</a>
+                <a href="cookies.html"
+                    style="color: var(--white); text-decoration: none; margin: 0 15px; font-size: 0.9em; opacity: 0.8; transition: opacity 0.3s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Cookies</a>
+            </div>
+            <div class="footer-copy">
+                <a href="admin.html" style="color: inherit; text-decoration: none; cursor: default;">&copy; 2026</a>
+                DORMICONFORT. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gift Popup (Premium Redesign) -->
+    <div id="gift-overlay" class="popup-overlay"></div>
+    <div id="gift-popup" class="gift-popup premium-popup">
+        <button id="close-popup" class="close-btn">&times;</button>
+        <div class="popup-container">
+            <div class="popup-image" style="background-image: url('assets/popup-bg.jpg');"></div>
+            <div class="popup-content">
+                <div class="popup-badge">OFERTA EXCLUSIVA EN WEB</div>
+                <h2>Regalo de Bienvenida</h2>
+                <div class="voucher-value">50€</div>
+                <p>Consigue tu vale de 50€ para tu próxima compra superior a 300€ en nuestra tienda de
+                    <strong>Miguelturra</strong>.
+                </p>
+
+                <form id="popup-form">
+                    <div class="input-group">
+                        <div class="name-fields">
+                            <input type="text" id="popup-name" placeholder="Nombre" required>
+                            <input type="text" id="popup-surname" placeholder="Apellidos" required>
+                        </div>
+                        <input type="email" id="popup-email" placeholder="Introduce tu email" required>
+                        <div class="privacy-container">
+                            <input type="checkbox" id="privacy-check" required>
+                            <label for="privacy-check">He leído y acepto la <a href="privacidad.html"
+                                    target="_blank">Política de Privacidad</a> y el <a href="aviso-legal.html"
+                                    target="_blank">Aviso Legal</a>, y consiento el tratamiento de mis datos para
+                                recibir mi vale promocional y comunicaciones comerciales de DORMICONFORT por correo
+                                electrónico. Puedes cancelar la suscripción en cualquier momento.</label>
+                        </div>
+                        <button type="submit" class="popup-submit-btn">RECIBIR MI REGALO</button>
+                    </div>
+                </form>
+
+                <div id="popup-success" class="success-message" style="display: none;">
+                    <div class="success-icon">✓</div>
+                    <p>¡Vale enviado! Revisa tu bandeja de entrada.</p>
+                </div>
+
+                <div id="popup-duplicate" class="duplicate-message" style="display: none;">
+                    <div class="duplicate-icon">!</div>
+                    <p>Este correo electrónico ya ha sido registrado en la oferta. ¡Pasa por la tienda para conocer más
+                        ofertas!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const _URL = 'https://qjkgrtsepfqkixebktbv.supabase.co';
+        const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' + '.' +
+            'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2dydHNlcGZxa2l4ZWJrdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTM2MTUsImV4cCI6MjA4ODU2OTYxNX0' + '.' +
+            'SmsQGDNo9GsPWLOFPI1hoaGQswEzhPEjC_9U7FKKLO4';
+        // Incrementa esta versión cada vez que cambies el texto de los términos del pop-up
+        const CONSENT_VERSION = 'v1';
+
+        let client;
+
+        // ── Cache helpers (shared key with productos.html) ────────────────────────
+        const CACHE_KEY = 'dormi_products_cache';
+        const CACHE_TTL = 10 * 60 * 1000;
+        function getCached() {
+            try {
+                const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+                if (c && (Date.now() - c.ts) < CACHE_TTL) return c.data;
+            } catch (_) { }
+            return null;
+        }
+        function saveCache(data) {
+            try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch (_) { }
+        }
+
+        function renderFlex(data) {
+            const grid = document.getElementById('featured-products-grid');
+            if (!grid || !data) return;
+
+            const flexProducts = data.filter(p =>
+                (p.category_tags || '').toLowerCase().includes('destacado_flex')
+            );
+
+            if (flexProducts.length === 0) {
+                grid.innerHTML = '<p style="color:#64748b;padding:40px 0;">No hay productos FLEX disponibles.</p>';
+                return;
+            }
+
+            grid.innerHTML = flexProducts.map(p => `
+                <div class="product-card" style="min-width:280px;max-width:300px;flex-shrink:0;scroll-snap-align:start;cursor:pointer;"
+                    onclick="sessionStorage.setItem('currentProductId','${p.id}'); window.location.href='producto.html?id=${p.id}'">
+                    ${p.offer_price ? `<div class="product-badge" style="background:#EF4444;color:white;">¡Oferta!</div>` : ''}
+                    <img src="${p.image_url || 'assets/placeholder.png'}" alt="${p.name}">
+                    <div class="product-info">
+                        <h3>${p.name}</h3>
+                        <p class="product-desc-text" style="font-size:0.95rem;">${p.description || ''}</p>
+                        <div class="product-price">
+                            ${p.price != null ? (p.offer_price
+                    ? `<span class="original-price">${p.price}€</span><span class="offer-price">${p.offer_price}€</span>`
+                    : `<span class="current-price">${p.price}€</span>`) : ''}
+                        </div>
+                        <a href="producto.html?id=${p.id}" class="ver-mas-btn"
+                            style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;text-decoration:none;color:var(--primary);font-weight:600;font-size:0.9rem;"
+                            onclick="event.stopPropagation();sessionStorage.setItem('currentProductId','${p.id}');">
+                            Ver producto <i class="fas fa-arrow-right" style="font-size:0.75rem;"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            // Wire arrow buttons
+            const prev = document.getElementById('flex-prev');
+            const next = document.getElementById('flex-next');
+            const cardW = 300 + 24;
+            function updateFlexArrows() {
+                const maxScroll = grid.scrollWidth - grid.clientWidth;
+                prev.style.display = grid.scrollLeft > 4 ? 'flex' : 'none';
+                next.style.display = grid.scrollLeft < maxScroll - 4 ? 'flex' : 'none';
+            }
+            window.updateFlexArrows = updateFlexArrows;
+            prev.onclick = () => { grid.scrollBy({ left: -cardW, behavior: 'smooth' }); };
+            next.onclick = () => { grid.scrollBy({ left: cardW, behavior: 'smooth' }); };
+            setTimeout(updateFlexArrows, 100);
+        }
+
+        async function initHome() {
+            if (!window.supabase) { setTimeout(initHome, 50); return; }
+            try {
+                client = window.supabase.createClient(_URL, _KEY);
+                const res = await client.from('products').select('*').order('created_at', { ascending: false });
+                if (res.error) throw res.error;
+                const data = res.data || [];
+                saveCache(data);
+                renderFlex(data);
+            } catch (e) { console.error(e); }
+        }
+
+        // Entry point: use cache instantly, or fetch from Supabase
+        document.addEventListener('DOMContentLoaded', () => {
+            const cached = getCached();
+            if (cached) {
+                renderFlex(cached);
+            } else {
+                initHome();
+            }
+        });
+
+        // Mobile Menu
+        const navToggle = document.getElementById('nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                if (navLinks.style.display === 'flex') {
+                    Object.assign(navLinks.style, {
+                        position: 'absolute', top: '90px', left: '0', width: '100%',
+                        backgroundColor: 'white', flexDirection: 'column', padding: '20px',
+                        boxShadow: '0 10px 10px rgba(0,0,0,0.1)', zIndex: '1000'
+                    });
+                }
+            });
+        }
+
+        const reveal = () => {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 150) {
+                    el.classList.add('active');
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }
+            });
+        };
+        window.addEventListener('scroll', reveal);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.reveal').forEach(el => {
+                el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; el.style.transition = '0.8s';
+            });
+            reveal();
+        });
+
+        // ─── Brands Carousel: rAF scroll + precise hover ────────────────────────
+        // Replaces the CSS animation to avoid browser throttling on tab switch.
+        // requestAnimationFrame pauses automatically when the tab is hidden and
+        // resumes cleanly without jumps via the Page Visibility API.
+        (function () {
+            const carousel = document.querySelector('.brands-carousel');
+            const track = document.querySelector('.brands-track');
+            if (!carousel || !track) return;
+
+            let position = 0;   // current horizontal offset in px
+            let speed = 30;  // px/s, recalculated after load
+            let rafId = null;
+            let lastTime = null;
+
+            function step(ts) {
+                if (lastTime === null) lastTime = ts;   // first frame after resume
+                const delta = (ts - lastTime) / 1000;   // seconds
+                lastTime = ts;
+
+                const half = track.scrollWidth / 2;
+                position += speed * delta;
+                if (position >= half) position -= half; // seamless loop
+
+                track.style.transform = `translateX(${-position}px)`;
+                rafId = requestAnimationFrame(step);
+            }
+
+            function startScroll() {
+                if (rafId) return;
+                lastTime = null; // reset so first delta is 0, no spike
+                rafId = requestAnimationFrame(step);
+            }
+
+            function stopScroll() {
+                if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            }
+
+            // Start after all images load so scrollWidth is accurate
+            window.addEventListener('load', () => {
+                const half = track.scrollWidth / 2;
+                speed = half / 60; // same perceived speed as original 60s CSS animation
+                startScroll();
+            });
+
+            // Page Visibility API – stop rAF when tab hidden, restart cleanly when visible
+            document.addEventListener('visibilitychange', () => {
+                document.hidden ? stopScroll() : startScroll();
+            });
+
+            // ── Precise hover: getBoundingClientRect() tracks visual position ──────
+            let activeItem = null;
+
+            carousel.addEventListener('mousemove', (e) => {
+                const items = track.querySelectorAll('.brand-item');
+                let found = null;
+                for (const item of items) {
+                    const r = item.getBoundingClientRect();
+                    if (e.clientX >= r.left && e.clientX <= r.right &&
+                        e.clientY >= r.top && e.clientY <= r.bottom) {
+                        found = item; break;
+                    }
+                }
+                if (found !== activeItem) {
+                    if (activeItem) activeItem.classList.remove('brand-hovered');
+                    activeItem = found;
+                    if (activeItem) activeItem.classList.add('brand-hovered');
+                }
+            });
+
+            carousel.addEventListener('mouseleave', () => {
+                if (activeItem) activeItem.classList.remove('brand-hovered');
+                activeItem = null;
+            });
+        })();
+        // ────────────────────────────────────────────────────────────────────────
+
+        // Hero Slider
+        const slides = document.querySelectorAll('.hero-slide');
+        let currentSlide = 0;
+        if (slides.length > 0) {
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 8000);
+        }
+
+        // Gift Popup
+        const popup = document.getElementById('gift-popup');
+        const overlay = document.getElementById('gift-overlay');
+        const closeBtn = document.getElementById('close-popup');
+        const popupForm = document.getElementById('popup-form');
+
+        const hidePopup = () => {
+            if (popup) popup.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        };
+
+        if (popup) {
+            setTimeout(() => {
+                if (!sessionStorage.getItem('giftPopupPremiumShown')) {
+                    popup.classList.add('active');
+                    overlay.classList.add('active');
+                    sessionStorage.setItem('giftPopupPremiumShown', 'true');
+                }
+            }, 5000);
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', hidePopup);
+        if (overlay) overlay.addEventListener('click', hidePopup);
+
+        if (popupForm) {
+            popupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = popupForm.querySelector('button');
+                btn.disabled = true; btn.textContent = 'Enviando...';
+
+                const consentLabel = document.querySelector('label[for="privacy-check"]');
+                const consentText = consentLabel ? consentLabel.textContent.trim() : 'Aceptación de Política de Privacidad y Aviso Legal';
+                const leadData = {
+                    name: document.getElementById('popup-name').value + ' ' + document.getElementById('popup-surname').value,
+                    email: document.getElementById('popup-email').value,
+                    message: 'Interesado en Vale de 50€ (Regalo Bienvenida)',
+                    phone: '',
+                    consent: document.getElementById('privacy-check').checked,
+                    consent_version: CONSENT_VERSION,
+                    consent_text: consentText,
+                    timestamp: new Date().toISOString()
+                };
+
+                try {
+                    // 1. Check if email already exists in Supabase to avoid duplicates
+                    const { data: existingLead } = await client.from('leads').select('email').eq('email', leadData.email).maybeSingle();
+
+                    if (existingLead) {
+                        document.getElementById('popup-duplicate').style.display = 'block';
+                        popupForm.style.display = 'none';
+                        setTimeout(hidePopup, 4000);
+                        return;
+                    }
+
+                    // 2. Save to Supabase
+                    const { error } = await client.from('leads').insert([leadData]);
+
+                    // 3. Integration with Brevo API (with compliance data)
+                    const brevoApiKey = 'xkeysib-' + '467ab62cdd8f4af58856bfcd4d8cdac5779bf8ee6463e37f86006c5b612e914e' + '-' + '9F53ifsU3ooxecLr';
+                    const listId = 2;
+
+                    await fetch('https://api.brevo.com/v3/contacts', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'api-key': brevoApiKey
+                        },
+                        body: JSON.stringify({
+                            email: leadData.email,
+                            attributes: {
+                                NOMBRE: document.getElementById('popup-name').value,
+                                APELLIDOS: document.getElementById('popup-surname').value,
+                                CONSENTIMIENTO: true,
+                                FECHA_REGISTRO: leadData.timestamp
+                            },
+                            listIds: [listId],
+                            updateEnabled: true
+                        })
+                    }).catch(err => console.log("Brevo API error:", err));
+
+                    document.getElementById('popup-success').style.display = 'block';
+                    popupForm.style.display = 'none';
+                    setTimeout(hidePopup, 3000);
+
+                } catch (err) {
+                    alert('Error enviando el vale. Revisa tu conexión.');
+                } finally {
+                    btn.disabled = false; btn.textContent = 'RECIBIR MI REGALO';
+                }
+            });
+        }
+    </script> <!-- Smart Chat & WhatsApp Widget -->
+    <script src="chat.js"></script>
+</body>
+
+</html>

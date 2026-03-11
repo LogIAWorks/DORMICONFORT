@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos | DORMICONFORT</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="description"
+        content="Explora nuestro catálogo completo de colchones Flex, bases, canapés y almohadas. Calidad premium para tu descanso.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://qjkgrtsepfqkixebktbv.supabase.co">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Service Worker registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => { });
+            });
+        }
+    </script>
+    <style>
+        .products-page {
+            padding-top: 140px;
+            padding-bottom: 100px;
+        }
+
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cat-btn.active,
+        .cat-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .product-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .filters-container {
+            margin-bottom: 40px;
+        }
+
+        .btn-download {
+            border: none;
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .btn-download:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-download.loading {
+            background: #64748B;
+            cursor: wait;
+            opacity: 0.8;
+            animation: btnPulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes btnPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.98);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Expandable description */
+        .product-desc-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .product-desc-text.expanded {
+            display: block;
+            -webkit-line-clamp: unset;
+            overflow: visible;
+        }
+
+        .ver-mas-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 0 0 0;
+            display: inline-block;
+            font-family: inherit;
+        }
+
+        .ver-mas-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Skeleton loader cards ── */
+        .skeleton-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+        }
+
+        .sk-img {
+            width: 100%;
+            height: 250px;
+        }
+
+        .sk-body {
+            padding: 25px;
+        }
+
+        .sk-line {
+            height: 13px;
+            border-radius: 7px;
+            margin-bottom: 12px;
+        }
+
+        .sk-title {
+            width: 65%;
+            height: 20px;
+        }
+
+        .sk-desc1 {
+            width: 95%;
+        }
+
+        .sk-desc2 {
+            width: 78%;
+        }
+
+        .sk-price {
+            width: 35%;
+            height: 22px;
+            margin-top: 18px;
+        }
+
+        .sk-img,
+        .sk-line {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e8eef4 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: skShimmer 1.4s infinite;
+        }
+
+        @keyframes skShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
+    <!-- PDF libraries loaded lazily on demand (see generatePDFCatalog) -->
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="DORMICONFORT Logo">
+                <span class="logo-text"><span class="filled-d">D</span>ORMICONFORT</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#inicio">Inicio</a></li>
+                <li><a href="index.html#marcas">Marcas</a></li>
+                <li><a href="productos.html" class="active">Productos</a></li>
+                <li><a href="index.html#contacto">Contacto</a></li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main class="products-page">
+        <div class="container">
+            <div class="products-header text-center">
+                <h1 class="section-title">Nuestro Catálogo Completo</h1>
+                <p class="tagline-regional">La mayor colchonería de Castilla-La Mancha</p>
+                <div class="download-section" style="margin-top: 20px;">
+                    <button onclick="generatePDFCatalog(this)" class="btn-download">
+                        <i class="fas fa-file-pdf"></i> Descargar Catálogo PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="filters-container">
+                <div class="category-nav">
+                    <button class="cat-btn active" data-filter="all">Todos</button>
+                    <button class="cat-btn" data-filter="colchones">Colchones</button>
+                    <button class="cat-btn" data-filter="bases">Bases y Canapés</button>
+                    <button class="cat-btn" data-filter="almohadas">Almohadas</button>
+                    <button class="cat-btn" data-filter="sillones">Sillones</button>
+                    <button class="cat-btn" data-filter="sofas">Sofás</button>
+                    <button class="cat-btn" data-filter="cabeceros">Cabeceros</button>
+                    <button class="cat-btn" data-filter="mesitas">Mesitas</button>
+                </div>
+            </div>
+
+            <div class="product-grid-full" id="product-list">
+                <!-- Products will be loaded dynamically from main.js -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Pre-Footer Info Bar -->
+    <div class="pre-footer-info-bar">
+        <div class="container text-center">
+            <span class="info-text">
+                <i class="fa-solid fa-truck-fast"></i> Transporte a domicilio y montaje gratuito
+            </span>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="footer-logo">
+                <img src="assets/logo.png" alt="DORMICONFORT Logo">
+                <p><span class="logo-text footer-text"><span class="filled-d">D</span>ORMICONFORT</span> - Dormiconfort
+                    - Flex Miguelturra</p>
+            </div>
+            <div style="margin: 15px 0;">
+                <a href="privacidad.html"
+                    style="color: var(--white); text-decoration: none; margin: 0 15px; font-size: 0.9em; opacity: 0.8; transition: opacity 0.3s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Política de Privacidad</a>
+                <a href="aviso-legal.html"
+                    style="color: var(--white); text-decoration: none; margin: 0 15px; font-size: 0.9em; opacity: 0.8; transition: opacity 0.3s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Aviso Legal</a>
+                <a href="cookies.html"
+                    style="color: var(--white); text-decoration: none; margin: 0 15px; font-size: 0.9em; opacity: 0.8; transition: opacity 0.3s;"
+                    onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Cookies</a>
+            </div>
+            <div class="footer-copy">
+                <a href="admin.html" style="color: inherit; text-decoration: none; cursor: default;">&copy; 2026</a>
+                DORMICONFORT. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gift Popup (Premium Redesign) -->
+    <div id="gift-overlay" class="popup-overlay"></div>
+    <div id="gift-popup" class="gift-popup premium-popup">
+        <button id="close-popup" class="close-btn">&times;</button>
+        <div class="popup-container">
+            <div class="popup-image" style="background-image: url('assets/popup-bg.jpg');"></div>
+            <div class="popup-content">
+                <div class="popup-badge">OFERTA EXCLUSIVA EN WEB</div>
+                <h2>Regalo de Bienvenida</h2>
+                <div class="voucher-value">50€</div>
+                <p>Consigue tu vale de 50€ para tu próxima compra superior a 300€ en nuestra tienda de
+                    <strong>Miguelturra</strong>.
+                </p>
+                <form id="popup-form">
+                    <div class="input-group">
+                        <div class="name-fields">
+                            <input type="text" id="popup-name" placeholder="Nombre" required>
+                            <input type="text" id="popup-surname" placeholder="Apellidos" required>
+                        </div>
+                        <input type="email" id="popup-email" placeholder="Introduce tu email" required>
+                        <div class="privacy-container">
+                            <input type="checkbox" id="privacy-check" required>
+                            <label for="privacy-check">He leído y acepto la <a href="privacidad.html"
+                                    target="_blank">Política de Privacidad</a> y el <a href="aviso-legal.html"
+                                    target="_blank">Aviso Legal</a>, y consiento el tratamiento de mis datos para
+                                recibir mi vale promocional y comunicaciones comerciales de DORMICONFORT por correo
+                                electrónico. Puedes cancelar la suscripción en cualquier momento.</label>
+                        </div>
+                        <button type="submit" class="popup-submit-btn">RECIBIR MI REGALO</button>
+                    </div>
+                </form>
+
+                <div id="popup-success" class="success-message" style="display: none;">
+                    <div class="success-icon">✓</div>
+                    <p>¡Vale enviado! Revisa tu bandeja de entrada.</p>
+                </div>
+
+                <div id="popup-duplicate" class="duplicate-message" style="display: none;">
+                    <div class="duplicate-icon">!</div>
+                    <p>Este correo electrónico ya ha sido registrado en la oferta. ¡Pasa por la tienda para conocer más
+                        ofertas!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const _URL = 'https://qjkgrtsepfqkixebktbv.supabase.co';
+        const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' + '.' +
+            'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2dydHNlcGZxa2l4ZWJrdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTM2MTUsImV4cCI6MjA4ODU2OTYxNX0' + '.' +
+            'SmsQGDNo9GsPWLOFPI1hoaGQswEzhPEjC_9U7FKKLO4';
+        // Incrementa esta versión cada vez que cambies el texto de los términos del pop-up
+        const CONSENT_VERSION = 'v1';
+
+        let client;
+        let allProducts = [];
+
+        // ── Cache helpers ────────────────────────────────────────────────────────
+        const CACHE_KEY = 'dormi_products_cache';
+        const CACHE_TTL = 10 * 60 * 1000; // 10 min
+        function getCached() {
+            try {
+                const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+                if (c && (Date.now() - c.ts) < CACHE_TTL) return c.data;
+            } catch (_) { }
+            return null;
+        }
+        function saveCache(data) {
+            try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch (_) { }
+        }
+
+        // ── On DOM ready: render from cache instantly OR show skeletons ───────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const cached = getCached();
+            if (cached) {
+                // Instant render – no network needed
+                allProducts = cached;
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlCategory = urlParams.get('category');
+                if (urlCategory && urlCategory !== 'all') {
+                    const filtered = allProducts.filter(p =>
+                        (p.category_tags || '').split('|').map(t => t.trim().toLowerCase()).includes(urlCategory.toLowerCase())
+                    );
+                    render(filtered);
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    const btn = document.querySelector(`.cat-btn[data-filter="${urlCategory}"]`);
+                    if (btn) btn.classList.add('active');
+                } else {
+                    render(allProducts);
+                }
+            } else {
+                // No cache – show skeletons while we fetch from Supabase
+                const grid = document.getElementById('product-list');
+                if (grid) {
+                    const skCard = `
+                        <div class="skeleton-card">
+                            <div class="sk-img"></div>
+                            <div class="sk-body">
+                                <div class="sk-line sk-title"></div>
+                                <div class="sk-line sk-desc1"></div>
+                                <div class="sk-line sk-desc2"></div>
+                                <div class="sk-line sk-price"></div>
+                            </div>
+                        </div>`;
+                    grid.innerHTML = skCard.repeat(6);
+                }
+                initCatalog();
+            }
+        });
+        // ────────────────────────────────────────────────────────────────────────
+
+        async function initCatalog() {
+            if (!window.supabase) {
+                setTimeout(initCatalog, 50);
+                return;
+            }
+
+            try {
+                client = window.supabase.createClient(_URL, _KEY);
+                const res = await client.from('products').select('*').order('created_at', { ascending: false });
+                if (res.error) throw res.error;
+                const data = res.data || [];
+                saveCache(data);
+                allProducts = data;
+
+                // Read URL category param and apply filter on first render (no flash)
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlCategory = urlParams.get('category');
+                if (urlCategory && urlCategory !== 'all') {
+                    const filtered = allProducts.filter(p =>
+                        (p.category_tags || '').split('|').map(t => t.trim().toLowerCase()).includes(urlCategory.toLowerCase())
+                    );
+                    render(filtered);
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    const activeBtn = document.querySelector(`.cat-btn[data-filter="${urlCategory}"]`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                } else {
+                    render(allProducts);
+                }
+            } catch (e) {
+                console.error('Error loading products:', e);
+            }
+        }
+
+        function render(products) {
+            const grid = document.getElementById('product-list');
+            if (!grid) return;
+
+            if (!products || products.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #64748b;">No se han encontrado productos en esta categoría.</div>';
+                return;
+            }
+
+            grid.innerHTML = products.map((p, i) => `
+                <a href="producto.html?id=${p.id}" class="product-card" style="text-decoration:none;display:block;color:inherit;" data-tags="${p.category_tags || ''}" onclick="sessionStorage.setItem('currentProductId', '${p.id}');">
+                    ${p.offer_price ? `<div class="product-badge" style="background: #EF4444; color: white;">¡Oferta!</div>` : ''}
+                    <img src="${p.image_url || 'assets/placeholder.png'}" alt="${p.name}" loading="lazy">
+                    <div class="product-info">
+                        <h3>${p.name}</h3>
+                        <p class="product-desc-text">${p.description || ''}</p>
+                        <div class="product-price">
+                            ${p.price != null ? (
+                    p.offer_price ?
+                        `<span class="original-price">${p.price}€</span><span class="offer-price">${p.offer_price}€</span>` :
+                        `<span class="current-price">${p.price}€</span>`
+                ) : ''}
+                        </div>
+                        <span class="ver-mas-btn" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;">
+                            Ver producto completo <i class="fas fa-arrow-right" style="font-size:0.75rem;"></i>
+                        </span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function handleUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category'); // This can correspond to a tag
+            if (category) {
+                filterByTag(category);
+                const btn = document.querySelector(`.cat-btn[data-filter="${category}"]`);
+                if (btn) {
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            }
+        }
+
+        function filterByTag(tag) {
+            if (tag === 'all') {
+                render(allProducts);
+            } else {
+                render(allProducts.filter(p => (p.category_tags || '').split('|').map(t => t.trim().toLowerCase()).includes(tag.toLowerCase())));
+            }
+        }
+
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterByTag(filter);
+            });
+        });
+
+        // Note: initCatalog is called only from the DOMContentLoaded handler above
+        // (which checks cache first). The duplicate call here was removed to prevent
+        // a Supabase re-fetch + DOM re-render ~4s after initial cache render.
+
+        // PDF Generation – libraries loaded lazily on first click (saves ~500 KB on initial load)
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+                const s = document.createElement('script');
+                s.src = src; s.onload = resolve; s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+
+        window.generatePDFCatalog = async (clickedBtn) => {
+            const btn = clickedBtn || document.querySelector('.btn-download');
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+                btn.classList.add('loading');
+                btn.disabled = true;
+            }
+
+            try {
+                // Lazy-load jsPDF only when needed
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js');
+                if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Get Branding from LocalStorage
+                const logoBase64 = localStorage.getItem('dormi_logo');
+                const catalogYear = localStorage.getItem('dormi_catalog_year') || '2026';
+
+                // --- PORTADA ---
+                if (logoBase64) {
+                    try { doc.addImage(logoBase64, 'PNG', 65, 50, 80, 40); } catch (e) { }
+                }
+
+                doc.setFontSize(26);
+                doc.setTextColor(30, 41, 59);
+                doc.text("CATÁLOGO DE PRODUCTOS", 105, 120, { align: "center" });
+
+                doc.setFontSize(18);
+                doc.text(`Edición ${catalogYear}`, 105, 135, { align: "center" });
+
+                doc.setFontSize(14);
+                doc.setTextColor(100);
+                doc.text("DORMICONFORT - Miguelturra", 105, 150, { align: "center" });
+
+                doc.addPage();
+
+                // --- TABLA DE PRODUCTOS ---
+                doc.setFontSize(22);
+                doc.setTextColor(2, 62, 138);
+                doc.text("Listado Detallado", 14, 20);
+
+                const tableData = (allProducts && allProducts.length > 0 ? allProducts : []).map(p => [
+                    p.name,
+                    (p.category_tags || '').replace(/\|/g, ', '),
+                    `${p.price}€` + (p.offer_price ? ` (Oferta: ${p.offer_price}€)` : '')
+                ]);
+
+                doc.autoTable({
+                    startY: 30,
+                    head: [['Producto', 'Categorías/Tipo', 'Precio']],
+                    body: tableData,
+                    theme: 'striped',
+                    headStyles: { fillColor: [2, 62, 138] },
+                    styles: { fontSize: 10 }
+                });
+
+                doc.save(`Catalogo_Dormiconfort_${catalogYear}.pdf`);
+
+            } catch (e) {
+                console.error(e);
+                alert("Error generando el PDF. Revisa tu conexión.");
+            } finally {
+                if (btn) {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                }
+            }
+        };
+
+        // Mobile Menu
+        const navToggle = document.getElementById('nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                if (navLinks.style.display === 'flex') {
+                    Object.assign(navLinks.style, {
+                        position: 'absolute', top: '90px', left: '0', width: '100%',
+                        backgroundColor: 'white', flexDirection: 'column', padding: '20px',
+                        boxShadow: '0 10px 10px rgba(0,0,0,0.1)', zIndex: '1000'
+                    });
+                }
+            });
+        }
+
+        // Scroll Reveal
+        const reveal = () => {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 150) {
+                    el.classList.add('active');
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }
+            });
+        };
+        window.addEventListener('scroll', reveal);
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.reveal').forEach(el => {
+                el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; el.style.transition = '0.8s';
+            });
+            reveal();
+        });
+
+        // Gift Popup
+        const popup = document.getElementById('gift-popup');
+        const overlay = document.getElementById('gift-overlay');
+        const closeBtn = document.getElementById('close-popup');
+        const popupForm = document.getElementById('popup-form');
+
+        const hidePopup = () => {
+            if (popup) popup.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+        };
+
+        if (popup) {
+            setTimeout(() => {
+                if (!sessionStorage.getItem('giftPopupPremiumShown')) {
+                    popup.classList.add('active');
+                    overlay.classList.add('active');
+                    sessionStorage.setItem('giftPopupPremiumShown', 'true');
+                }
+            }, 5000);
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', hidePopup);
+        if (overlay) overlay.addEventListener('click', hidePopup);
+
+        if (popupForm) {
+            popupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = popupForm.querySelector('button');
+                btn.disabled = true; btn.textContent = 'Enviando...';
+
+                const email = document.getElementById('popup-email').value;
+                const consentLabel = document.querySelector('label[for="privacy-check"]');
+                const consentText = consentLabel ? consentLabel.textContent.trim() : 'Aceptación de Política de Privacidad y Aviso Legal';
+                const leadData = {
+                    name: document.getElementById('popup-name').value + ' ' + document.getElementById('popup-surname').value,
+                    email: email,
+                    message: 'Interesado en Vale de 50€ (Regalo Bienvenida) - Productos',
+                    phone: '',
+                    consent: document.getElementById('privacy-check').checked,
+                    consent_version: CONSENT_VERSION,
+                    consent_text: consentText,
+                    timestamp: new Date().toISOString()
+                };
+
+                try {
+                    // 1. Check if email exists in Supabase
+                    const { data: existingLead } = await client.from('leads').select('email').eq('email', email).maybeSingle();
+
+                    if (existingLead) {
+                        document.getElementById('popup-duplicate').style.display = 'block';
+                        popupForm.style.display = 'none';
+                        setTimeout(hidePopup, 4000);
+                        return;
+                    }
+
+                    // 2. Save to Supabase
+                    await client.from('leads').insert([leadData]);
+
+                    // 3. Integration with Brevo API
+                    const brevoApiKey = 'xkeysib-' + '467ab62cdd8f4af58856bfcd4d8cdac5779bf8ee6463e37f86006c5b612e914e' + '-' + '9F53ifsU3ooxecLr';
+                    const listId = 2;
+
+                    await fetch('https://api.brevo.com/v3/contacts', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'api-key': brevoApiKey
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            attributes: {
+                                NOMBRE: document.getElementById('popup-name').value,
+                                APELLIDOS: document.getElementById('popup-surname').value,
+                                CONSENTIMIENTO: true,
+                                FECHA_REGISTRO: leadData.timestamp
+                            },
+                            listIds: [listId],
+                            updateEnabled: true
+                        })
+                    });
+
+                    document.getElementById('popup-success').style.display = 'block';
+                    popupForm.style.display = 'none';
+                    setTimeout(hidePopup, 3000);
+
+                } catch (err) {
+                    alert('Error enviando el vale. Revisa tu conexión.');
+                } finally {
+                    btn.disabled = false; btn.textContent = 'RECIBIR MI REGALO';
+                }
+            });
+        }
+    </script>
+
+    <!-- Smart Chat & WhatsApp Widget -->
+    <script src="chat.js"></script>
+</body>
+
+</html>

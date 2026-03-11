@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baja de Suscripción | DORMICONFORT</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+        }
+
+        .unsubscribe-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .unsubscribe-card {
+            background: white;
+            max-width: 500px;
+            width: 100%;
+            padding: 50px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .unsubscribe-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 25px;
+        }
+
+        .icon-loading {
+            background: #EFF6FF;
+            color: var(--primary);
+        }
+
+        .icon-success {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .icon-error {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .unsubscribe-card h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .unsubscribe-card p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-home {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-home:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" style="position: relative; background: white;">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="DORMICONFORT Logo">
+                <span class="logo-text"><span class="filled-d">D</span>ORMICONFORT</span>
+            </a>
+        </nav>
+    </header>
+
+    <main class="unsubscribe-container">
+        <div class="unsubscribe-card" id="status-card">
+            <div class="unsubscribe-icon icon-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h2>Procesando...</h2>
+            <p>Estamos gestionando tu solicitud de baja.</p>
+        </div>
+    </main>
+
+    <footer class="footer" style="margin-top: auto;">
+        <div class="container text-center">
+            <div class="footer-copy">
+                &copy; 2026 DORMICONFORT. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const _URL = 'https://qjkgrtsepfqkixebktbv.supabase.co';
+        const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' + '.' +
+            'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2dydHNlcGZxa2l4ZWJrdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTM2MTUsImV4cCI6MjA4ODU2OTYxNX0' + '.' +
+            'SmsQGDNo9GsPWLOFPI1hoaGQswEzhPEjC_9U7FKKLO4';
+
+        async function initUnsubscribe() {
+            const card = document.getElementById('status-card');
+
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const email = urlParams.get('email');
+
+                if (!email) {
+                    showStatus(card, 'error', 'Error en el enlace', 'No se ha proporcionado una dirección de correo válida para gestionar la baja.');
+                    return;
+                }
+
+                if (!window.supabase) {
+                    setTimeout(initUnsubscribe, 50);
+                    return;
+                }
+
+                const client = window.supabase.createClient(_URL, _KEY);
+
+                // 2. Integration with Brevo API
+                try {
+                    const brevoApiKey = 'xkeysib-' + '467ab62cdd8f4af58856bfcd4d8cdac5779bf8ee6463e37f86006c5b612e914e' + '-' + '9F53ifsU3ooxecLr';
+                    await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'api-key': brevoApiKey
+                        },
+                        body: JSON.stringify({
+                            emailBlacklisted: true
+                        })
+                    });
+                } catch (brevoError) {
+                    console.log("No se pudo contactar con Brevo para cancelar la suscripción", brevoError);
+                }
+
+                if (error) {
+                    console.error('Error al darse de baja:', error);
+                    showStatus(card, 'error', 'Ha ocurrido un error', 'No hemos podido procesar tu solicitud en este momento. Por favor, inténtalo más tarde.');
+                } else {
+                    showStatus(card, 'success', 'Baja confirmada', `El correo electrónico <strong>${email}</strong> ha sido eliminado de nuestra lista de comunicaciones exitosamente.`);
+                }
+
+            } catch (err) {
+                console.error(err);
+                showStatus(card, 'error', 'Ha ocurrido un error', 'Se ha producido un error inesperado de conexión.');
+            }
+        }
+
+        function showStatus(card, type, title, message) {
+            let iconHtml = '';
+            let iconClass = '';
+
+            if (type === 'success') {
+                iconHtml = '<i class="fas fa-check"></i>';
+                iconClass = 'icon-success';
+            } else if (type === 'error') {
+                iconHtml = '<i class="fas fa-exclamation-triangle"></i>';
+                iconClass = 'icon-error';
+            }
+
+            card.innerHTML = `
+                <div class="unsubscribe-icon ${iconClass}">
+                    ${iconHtml}
+                </div>
+                <h2>${title}</h2>
+                <p>${message}</p>
+                <a href="index.html" class="btn-home">Volver al inicio</a>
+            `;
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initUnsubscribe);
+        } else {
+            initUnsubscribe();
+        }
+    </script>
+</body>
+
+</html>

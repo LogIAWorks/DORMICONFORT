@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | DORMICONFORT</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: var(--text-dark);
+            color: var(--white);
+            padding: 30px;
+        }
+
+        .main-panel {
+            background-color: #F1F5F9;
+            padding: 40px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .product-item:last-child {
+            border: none;
+        }
+
+        .btn-delete {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #94A3B8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background: #E2E8F0;
+        }
+
+        .image-upload-area {
+            border: 2px dashed #CBD5E1;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #F8FAFC;
+            position: relative;
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--primary);
+            background: #EFF6FF;
+        }
+
+        .image-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 0;
+        }
+
+        #image-preview {
+            width: 100%;
+            max-height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .upload-placeholder {
+            color: #94A3B8;
+            font-size: 0.9rem;
+        }
+
+        .upload-placeholder span {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .product-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+
+        /* Save notification */
+        .save-notification {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #065F46;
+            color: white;
+            padding: 16px 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            z-index: 9999;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            max-width: 600px;
+            transition: opacity 0.5s ease;
+        }
+
+        .save-notification i {
+            font-size: 1.3rem;
+        }
+
+        .save-notification strong {
+            color: #6EE7B7;
+        }
+
+        .btn-export {
+            background: #F59E0B;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-export:hover {
+            background: #D97706;
+            transform: translateY(-2px);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <img src="assets/logo.png" style="height: 50px; margin-bottom: 30px;" alt="Logo">
+            <h2>Panel</h2>
+            <ul style="list-style: none; margin-top: 20px;">
+                <li style="margin-bottom: 15px;"><a href="#"
+                        style="color: white; text-decoration: none; font-weight: 600;">📦 Productos</a></li>
+                <li style="margin-bottom: 15px;"><a href="index.html" style="color: #94A3B8; text-decoration: none;">🏠
+                        Volver a la Web</a></li>
+                <li style="margin-top: 50px;"><a href="#" id="logout"
+                        style="color: #F87171; text-decoration: none;">Cerrar Sesión</a></li>
+            </ul>
+        </div>
+        <div class="main-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h1>Panel de Administración</h1>
+                <div id="sync-status"
+                    style="display: flex; align-items: center; gap: 8px; background: #E2E8F0; padding: 6px 12px; border-radius: 50px; font-size: 0.85rem; font-weight: 500;">
+                    <i class="fas fa-database" style="color: #10B981;"></i>
+                    <span style="color: #065F46;">Sincronizado con Supabase</span>
+                </div>
+            </div>
+
+            <!-- Logo Configuration Section -->
+            <div class="card" style="margin-bottom: 30px;">
+                <h3>Configuración del Logo de Empresa</h3>
+                <p style="font-size: 0.9rem; color: #64748B; margin-bottom: 15px;">Este logo aparecerá en la cabecera de
+                    las hojas de tu catálogo PDF.</p>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div id="logo-preview-container"
+                        style="width: 150px; height: 80px; border: 2px dashed #CBD5E1; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #F8FAFC;">
+                        <img id="current-logo-display" src="" alt="Vista previa del logo"
+                            style="max-width: 100%; max-height: 100%; display: none;">
+                        <span id="no-logo-text" style="font-size: 0.8rem; color: #94A3B8;">Sin Logo</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <input type="file" id="logo_file_input" accept="image/*" style="display: none;">
+                        <button class="btn-add" onclick="document.getElementById('logo_file_input').click()"
+                            style="padding: 8px 15px; font-size: 0.9rem;">Seleccionar Logo</button>
+                        <button id="save-logo-btn" class="btn-add"
+                            style="padding: 8px 15px; font-size: 0.9rem; background: #10B981; margin-left: 10px; display: none;">Guardar
+                            Logo</button>
+                        <p id="logo-status-msg" style="font-size: 0.85rem; margin-top: 5px; display: none;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Añadir / Editar Producto</h3>
+                <form id="productForm" style="margin-top: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre del Producto</label>
+                            <input type="text" id="p_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="p_category">
+                                <option value="colchones">Colchones</option>
+                                <option value="bases">Bases y Canapés</option>
+                                <option value="almohadas">Almohadas</option>
+                                <option value="sillones">Sillones</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Precio Habitual (€)</label>
+                            <input type="number" id="p_price" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Oferta (€) <small
+                                    style="color:red;font-weight:normal;">(Opcional)</small></label>
+                            <input type="number" id="p_offer_price" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Imagen del Producto</label>
+                            <div class="image-upload-area" id="upload-area">
+                                <input type="file" id="p_image_file" accept="image/*">
+                                <div class="upload-placeholder" id="upload-placeholder">
+                                    <span>🖼️</span>
+                                    Haz clic para seleccionar una imagen
+                                </div>
+                                <img id="image-preview" src="" alt="Vista previa">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Descripción Corta</label>
+                        <textarea id="p_desc" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="p_featured" style="width: auto; cursor: pointer;">
+                        <label for="p_featured" style="margin-bottom: 0; cursor: pointer;">Destacar en "Selección FLEX"
+                            (Inicio)</label>
+                    </div>
+                    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                        <button type="submit" class="btn-add" id="form-submit-btn">Guardar Producto</button>
+                        <button type="button" class="btn-cancel" id="cancel-edit-btn" style="display:none;">Cancelar
+                            Edición</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <h3>Productos en la Web</h3>
+                    <button class="btn-export" id="manual-export-btn">
+                        <i class="fas fa-download"></i> Exportar productos (JS)
+                    </button>
+                </div>
+                <div id="productList" style="margin-top: 15px;">
+                    <!-- Lista de productos -->
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <script>
+        console.log("=== SCRIPT STARTING ===");
+        const _URL = 'https://qjkgrtsepfqkixebktbv.supabase.co';
+        const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2dydHNlcGZxa2l4ZWJrdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTM2MTUsImV4cCI6MjA4ODU2OTYxNX0.SmsQGDNo9GsPWLOFPI1hoaGQswEzhPEjC_9U7FKKLO4';
+
+        let supabase;
+        let products = [];
+        let selectedProductImageBase64 = null;
+        let editingProductId = null;
+        let selectedLogoBase64 = null;
+
+        // 1. Auth check
+        if (localStorage.getItem('isAdmin') !== 'true') {
+            console.warn("Auth failed, redirecting...");
+            window.location.href = 'admin.html';
+        }
+
+        // 2. Initialize Supabase
+        async function initSupabase() {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(_URL, _KEY);
+                console.log("Supabase Client created.");
+            } else {
+                console.error("Supabase library not found!");
+            }
+        }
+
+        // 3. UI Helpers
+        function showSaveNotification(message) {
+            const notification = document.getElementById('save-notification');
+            const noteText = document.getElementById('save-notification-text');
+            notification.style.background = '#065F46';
+            noteText.innerHTML = `<strong>Exito:</strong> ${message || 'Cambios guardados.'}`;
+            notification.style.display = 'flex';
+            notification.style.opacity = '1';
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.style.display = 'none', 500);
+            }, 5000);
+        }
+
+        function resetForm() {
+            editingProductId = null; 
+            selectedProductImageBase64 = null;
+            document.getElementById('productForm').reset();
+            document.getElementById('image-preview').style.display = 'none';
+            document.getElementById('upload-placeholder').style.display = 'block';
+            document.getElementById('form-submit-btn').textContent = 'Guardar Producto';
+            document.getElementById('form-submit-btn').style.background = '';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+        }
+
+        // 4. Data Loading
+        async function fetchProducts() {
+            if (!supabase) await initSupabase();
+            try {
+                const { data, error } = await supabase.from('products').select('*').order('id', { ascending: true });
+                if (error) throw error;
+                return data || [];
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                return [];
+            }
+        }
+
+        function renderAdminProducts() {
+            const list = document.getElementById('productList');
+            if(!list) return;
+            list.innerHTML = products.map(p => `
+                <div class="product-item">
+                    <div style="display:flex; align-items:center;">
+                        <img src="${p.image}" alt="${p.name}" onerror="this.style.display='none'">
+                        <div>
+                            <strong>${p.name}</strong> <span class="badge">${p.category}</span>
+                            ${p.isFlexFeatured ? '<span style="color: #EAB308; margin-left: 5px;">*</span>' : ''}
+                            <div style="font-size: 0.85rem; color: #64748B;">
+                                ${p.offerPrice ? `<span style="text-decoration:line-through;">${p.price}€</span> <b>${p.offerPrice}€</b>` : `${p.price}€`}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-edit" onclick="editProduct(${p.id})">Editar</button>
+                        <button class="btn-delete" onclick="deleteProduct(${p.id})">Eliminar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 5. Product Logic
+        window.editProduct = (id) => {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            editingProductId = id;
+            document.getElementById('p_name').value = p.name;
+            document.getElementById('p_category').value = p.category;
+            document.getElementById('p_price').value = p.price;
+            document.getElementById('p_offer_price').value = p.offerPrice || '';
+            document.getElementById('p_desc').value = p.desc;
+            document.getElementById('p_featured').checked = !!p.isFlexFeatured;
+            selectedProductImageBase64 = p.image;
+            const preview = document.getElementById('image-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            preview.src = p.image; preview.style.display = 'block'; placeholder.style.display = 'none';
+            document.getElementById('form-submit-btn').textContent = 'Actualizar Producto';
+            document.getElementById('form-submit-btn').style.background = '#10B981';
+            document.getElementById('cancel-edit-btn').style.display = 'inline-block';
+            document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.deleteProduct = async (id) => {
+            if (!confirm('Eliminar?')) return;
+            try {
+                const { error } = await supabase.from('products').delete().eq('id', id);
+                if (error) throw error;
+                products = await fetchProducts();
+                renderAdminProducts();
+                showSaveNotification('Producto eliminado.');
+            } catch (err) {
+                console.error("Delete Error:", err);
+            }
+        };
+
+        // 6. Event Handlers
+        document.getElementById('logout').addEventListener('click', () => {
+            localStorage.removeItem('isAdmin');
+            window.location.href = 'admin.html';
+        });
+
+        document.getElementById('p_image_file').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedProductImageBase64 = e.target.result;
+                const preview = document.getElementById('image-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+                preview.src = selectedProductImageBase64;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('cancel-edit-btn').addEventListener('click', () => resetForm());
+
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log("SUBMIT CAPTURED");
+
+            if (!selectedProductImageBase64) {
+                alert('Selecciona una imagen.');
+                return;
+            }
+
+            const btn = document.getElementById('form-submit-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+
+            const productData = {
+                name: document.getElementById('p_name').value.trim(),
+                category: document.getElementById('p_category').value,
+                price: parseFloat(document.getElementById('p_price').value),
+                offerPrice: document.getElementById('p_offer_price').value ? parseFloat(document.getElementById('p_offer_price').value) : null,
+                isFlexFeatured: document.getElementById('p_featured').checked,
+                image: selectedProductImageBase64,
+                desc: document.getElementById('p_desc').value.trim()
+            };
+
+            try {
+                if (!supabase) await initSupabase();
+                let error;
+                if (editingProductId !== null) {
+                    const res = await supabase.from('products').update(productData).eq('id', editingProductId);
+                    error = res.error;
+                } else {
+                    const { data: maxIdData } = await supabase.from('products').select('id').order('id', { ascending: false }).limit(1);
+                    const nextId = (maxIdData && maxIdData.length > 0) ? maxIdData[0].id + 1 : 1;
+                    productData.id = nextId;
+                    const res = await supabase.from('products').insert([productData]);
+                    error = res.error;
+                }
+
+                if (error) throw error;
+                products = await fetchProducts();
+                renderAdminProducts();
+                resetForm();
+                showSaveNotification('Producto guardado correctamente.');
+            } catch (err) {
+                console.error("Save Error:", err);
+                alert("Error al guardar: " + err.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // Logo Logic
+        const currentLogo = localStorage.getItem('dormiconfort_logo');
+        if (currentLogo) {
+            const display = document.getElementById('current-logo-display');
+            display.src = currentLogo;
+            display.style.display = 'block';
+            document.getElementById('no-logo-text').style.display = 'none';
+        }
+        document.getElementById('logo_file_input').addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedLogoBase64 = e.target.result;
+                const display = document.getElementById('current-logo-display');
+                display.src = selectedLogoBase64;
+                display.style.display = 'block';
+                document.getElementById('no-logo-text').style.display = 'none';
+                document.getElementById('save-logo-btn').style.display = 'inline-block';
+            };
+            reader.readAsDataURL(file);
+        });
+        document.getElementById('save-logo-btn').addEventListener('click', () => {
+            if (selectedLogoBase64) {
+                localStorage.setItem('dormiconfort_logo', selectedLogoBase64);
+                document.getElementById('save-logo-btn').style.display = 'none';
+                alert('Logo guardado');
+            }
+        });
+
+        // Export Logic
+        document.getElementById('manual-export-btn').addEventListener('click', () => {
+            const content = `var PRODUCTS_DATA = ${JSON.stringify(products, null, 4)};`;
+            const blob = new Blob([content], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products.js';
+            a.click();
+        });
+
+        // Init
+        window.addEventListener('load', async () => {
+            console.log("Initializing Dashboard...");
+            await initSupabase();
+            products = await fetchProducts();
+            renderAdminProducts();
+            console.log("Dashboard Loaded.");
+        });
+    </script>
+</body>
+
+</html>

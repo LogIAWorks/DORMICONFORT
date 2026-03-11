@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Admin | DORMICONFORT</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--bg-light, #f8fafc);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            background: #fee2e2;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .status-msg {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <img src="assets/logo.png" alt="Logo" class="login-logo" onerror="this.style.display='none'">
+        <h2 style="margin-bottom: 5px; color: #1e293b;">Panel de Control</h2>
+        <p style="color: #64748b; margin-bottom: 30px; font-size: 0.95rem;">Introduce tus credenciales para continuar
+        </p>
+
+        <div id="errorMsg" class="error-msg"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" placeholder="JoseAntonio" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">Acceder</button>
+        </form>
+        <p class="status-msg" id="statusMsg">Conectando con la base de datos...</p>
+    </div>
+
+    <script>
+        // ============================================================
+        // LOGIN - Inicialización robusta
+        // ============================================================
+
+        const SUPABASE_URL = 'https://qjkgrtsepfqkixebktbv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2dydHNlcGZxa2l4ZWJrdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTM2MTUsImV4cCI6MjA4ODU2OTYxNX0.SmsQGDNo9GsPWLOFPI1hoaGQswEzhPEjC_9U7FKKLO4';
+
+        let sb = null;
+        const btnLogin = document.getElementById('loginBtn');
+        const errorDiv = document.getElementById('errorMsg');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // Si ya está logueado, redirigir directamente
+        if (localStorage.getItem('isAdminDormi') === 'true') {
+            window.location.replace('admin.html');
+        }
+
+        function showError(msg) {
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            errorDiv.style.display = 'none';
+        }
+
+        function waitForSupabase(callback, attempts = 0) {
+            if (window.supabase && window.supabase.createClient) {
+                sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                statusMsg.textContent = 'Listo.';
+                statusMsg.style.display = 'none';
+                btnLogin.disabled = false;
+                callback();
+            } else if (attempts < 100) {
+                setTimeout(() => waitForSupabase(callback, attempts + 1), 50);
+            } else {
+                statusMsg.textContent = 'Error de conexión. Comprueba tu internet.';
+                statusMsg.style.color = '#ef4444';
+                showError('No se pudo cargar la librería de base de datos. Recarga la página.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Deshabilitar botón hasta que Supabase cargue
+            btnLogin.disabled = true;
+
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!sb) {
+                    showError('La base de datos aún no está lista. Espera un momento y vuelve a intentarlo.');
+                    return;
+                }
+
+                const user = document.getElementById('username').value.trim();
+                const pass = document.getElementById('password').value;
+
+                hideError();
+                btnLogin.textContent = 'Verificando...';
+                btnLogin.disabled = true;
+
+                try {
+                    const { data, error } = await sb
+                        .from('admins')
+                        .select('id, username')
+                        .eq('username', user)
+                        .eq('password', pass)
+                        .maybeSingle();
+
+                    if (error) throw error;
+
+                    if (!data) {
+                        showError('Usuario o contraseña incorrectos.');
+                        return;
+                    }
+
+                    // Login correcto
+                    localStorage.setItem('isAdminDormi', 'true');
+                    window.location.replace('admin.html');
+
+                } catch (err) {
+                    console.error('[Login] Error:', err);
+                    showError('Error al verificar credenciales: ' + err.message);
+                } finally {
+                    btnLogin.textContent = 'Acceder';
+                    btnLogin.disabled = false;
+                }
+            });
+
+            // Iniciar Supabase
+            waitForSupabase(() => {
+                console.log('[Login] Supabase listo, formulario habilitado.');
+            });
+        });
+    </script>
+
+    <!-- Supabase al final para garantizar que el DOM está listo primero -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</body>
+
+</html>

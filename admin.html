@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | DORMICONFORT</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background-color: #f8fafc;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #1e293b;
+            color: white;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2.5rem;
+        }
+
+        .sidebar-brand img {
+            height: 40px;
+        }
+
+        .sidebar-brand .logo-text {
+            font-size: 1.1rem;
+            letter-spacing: 0px;
+        }
+
+        .sidebar-brand .filled-d {
+            background-color: white;
+            color: transparent !important;
+            display: inline-block;
+            width: 0.7em;
+            height: 0.76em;
+            border-radius: 0.05em 0.4em 0.4em 0.05em;
+            margin-right: 0.05em;
+            position: relative;
+            line-height: 1;
+            vertical-align: middle;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background-color: #334155;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            color: #f87171;
+            border: 1px solid #f87171;
+            padding: 0.8rem;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #f87171;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 2.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: #64748b;
+            font-weight: 600;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #f1f5f9;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-tag {
+            background: #f1f5f9;
+            color: #64748b;
+            margin-right: 4px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-outline {
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+        }
+
+        .btn-danger {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px;
+            padding: 2rem;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            padding: 0.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            width: 300px;
+            font-family: inherit;
+        }
+
+        .image-preview-box {
+            margin-top: 0.5rem;
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .image-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #loadingMsg {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        #errorMsg {
+            text-align: center;
+            padding: 2rem;
+            color: #ef4444;
+            display: none;
+        }
+
+        .desc-clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="assets/logo.png" alt="Logo">
+                <span class="logo-text" style="color:white"><span class="filled-d">D</span>ORMICONFORT</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" id="navProductos" onclick="showSection('products')">
+                        <i class="fas fa-box"></i> Productos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="navConfig" onclick="showSection('settings')">
+                        <i class="fas fa-cog"></i> Configuración
+                    </a>
+                </li>
+            </ul>
+            <a class="logout-btn" id="logoutBtn">Cerrar Sesión</a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Section Products -->
+            <section id="section-products">
+                <div class="header-actions">
+                    <h1>Gestión de Productos</h1>
+                    <div style="display:flex; gap:1rem;">
+                        <input type="text" placeholder="Buscar producto..." class="search-bar" id="searchProducts">
+                        <button class="btn btn-primary" id="newProductBtn">
+                            <i class="fas fa-plus"></i> Nuevo Producto
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div id="loadingMsg">Cargando productos...</div>
+                    <div id="errorMsg">Error al cargar productos. Comprueba la consola.</div>
+                    <table id="productsTableWrapper" style="display:none">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría / Tags</th>
+                                <th>Precio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section Settings -->
+            <section id="section-settings" style="display:none">
+                <div class="header-actions">
+                    <h1>Configuración</h1>
+                </div>
+                <div class="section-card">
+                    <div class="form-group">
+                        <label class="form-label">Año del Catálogo</label>
+                        <input type="number" id="catalogYear" class="form-control" value="2026">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()">Guardar Ajustes</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Nuevo Producto</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Producto *</label>
+                    <input type="text" id="pName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea id="pDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Precio Regular (€)</label>
+                        <input type="number" step="0.01" id="pPrice" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio Oferta (€)</label>
+                        <input type="number" step="0.01" id="pOfferPrice" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;">
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="colchones"> Colchones</label>
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="bases"> Bases y canapés</label>
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="almohadas"> Almohadas</label>
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="sillones"> Sillones</label>
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="sofas"> Sofás</label>
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="cabeceros"> Cabeceros</label>
+                        <label style="display:flex;align-items:center;gap:6px;font-weight:normal;cursor:pointer;"><input type="checkbox" name="cat" value="mesitas"> Mesitas</label>
+                    </div>
+                </div>
+                <div class="form-group" style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:15px;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;color:var(--primary);margin:0;">
+                        <input type="checkbox" name="cat" value="destacado_flex" style="width:18px;height:18px;">
+                        <i class="fas fa-star"></i> Mostrar en "Selección Destacada FLEX" (Inicio)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="font-weight:600;">Etiquetas especiales <small style="font-weight:normal;color:#64748b;">(separadas por |, ej: home|flex|news)</small></label>
+                    <input type="text" id="pExtraTags" class="form-control" placeholder="home|flex|news">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Imagen del Producto</label>
+                    <input type="file" id="pImageFile" class="form-control" accept="image/*">
+                    <input type="hidden" id="pImageUrl">
+                    <div class="image-preview-box" id="imagePreviewBox">
+                        <img id="imagePreview" src="" alt="Preview">
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ADMIN PANEL - Inicialización limpia y robusta
+        // ============================================================
+
+        // 1. Protección de acceso
+        if (localStorage.getItem('isAdminDormi') !== 'true') {
+            window.location.replace('login.html');
+        }
+
+        // 2. Constantes de Supabase
+        const SUPABASE_URL = 'https://qjkgrtsepfqkixebktbv.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqa2dydHNlcGZxa2l4ZWJrdGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5OTM2MTUsImV4cCI6MjA4ODU2OTYxNX0.SmsQGDNo9GsPWLOFPI1hoaGQswEzhPEjC_9U7FKKLO4';
+
+        // 3. Variables de estado
+        let sb = null;
+        let products = [];
+
+        // 4. Función de espera de la librería Supabase (CDN async)
+        function waitForSupabase(callback, attempts = 0) {
+            if (window.supabase && window.supabase.createClient) {
+                sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('[Admin] Supabase client listo.');
+                callback();
+            } else if (attempts < 100) {
+                setTimeout(() => waitForSupabase(callback, attempts + 1), 50);
+            } else {
+                console.error('[Admin] No se pudo cargar la librería de Supabase después de 5 segundos.');
+                showError('Error: No se pudo conectar con la base de datos. Comprueba tu conexión a internet.');
+            }
+        }
+
+        // 5. Funciones de UI
+        function showError(msg) {
+            const err = document.getElementById('errorMsg');
+            const loading = document.getElementById('loadingMsg');
+            if (loading) loading.style.display = 'none';
+            if (err) { err.textContent = msg; err.style.display = 'block'; }
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
+            const target = document.getElementById('section-' + id);
+            if (target) target.style.display = 'block';
+
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const activeLink = document.getElementById('nav' + id.charAt(0).toUpperCase() + id.slice(1));
+            if (activeLink) activeLink.classList.add('active');
+
+            if (id === 'products') loadProducts();
+        }
+
+        // 6. Carga de productos
+        async function loadProducts() {
+            if (!sb) return;
+
+            // Mostrar estado de carga
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('productsTableWrapper').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+
+            try {
+                const { data, error } = await sb
+                    .from('products')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) throw error;
+
+                products = data || [];
+                renderProducts(products);
+
+            } catch (err) {
+                console.error('[Admin] Error cargando productos:', err);
+                showError('Error al cargar: ' + err.message);
+            }
+        }
+
+        function renderProducts(list) {
+            const loading = document.getElementById('loadingMsg');
+            const tableWrapper = document.getElementById('productsTableWrapper');
+            const tbody = document.getElementById('productsTable');
+
+            if (loading) loading.style.display = 'none';
+
+            if (!list || list.length === 0) {
+                tableWrapper.style.display = 'table';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #64748b;">No hay productos registrados. Haz clic en "+ Nuevo Producto" para añadir uno.</td></tr>';
+                return;
+            }
+
+            tableWrapper.style.display = 'table';
+            tbody.innerHTML = list.map(p => `
+                <tr>
+                    <td>
+                        <img src="${p.image_url || ''}" class="product-img"
+                             onerror="this.style.opacity='0.3'; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22%3E%3Crect width=%2250%22 height=%2250%22 fill=%22%23f1f5f9%22/%3E%3C/svg%3E'">
+                    </td>
+                    <td><strong>${escHtml(p.name)}</strong><br><small class="desc-clamp" style="color:#94a3b8">${escHtml(p.description || '')}</small></td>
+                    <td>${(p.category_tags || '').split('|').filter(t => t).map(t => `<span class="badge badge-tag">${escHtml(t.trim())}</span>`).join('')}</td>
+                    <td>
+                        ${p.price != null 
+                            ? (p.offer_price
+                                ? `<span style="text-decoration:line-through;color:#94a3b8;font-size:0.85rem">${Number(p.price).toFixed(2)}€</span><br><strong style="color:#ef4444">${Number(p.offer_price).toFixed(2)}€</strong>`
+                                : `<strong>${Number(p.price).toFixed(2)}€</strong>`)
+                            : `<span style="color:#94a3b8; font-style:italic;">Sin precio</span>`
+                        }
+                    </td>
+                    <td style="white-space:nowrap">
+                        <button class="btn btn-outline" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger" style="margin-left:4px" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function escHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // 7. Modal
+        function openModal(resetId = true) {
+            if (resetId) {
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+                document.getElementById('pImageUrl').value = '';
+                document.getElementById('pExtraTags').value = '';
+                document.querySelectorAll('input[name="cat"]').forEach(cb => cb.checked = false);
+                document.getElementById('imagePreviewBox').style.display = 'none';
+                document.getElementById('modalTitle').innerText = 'Nuevo Producto';
+            }
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
+
+        function editProduct(id) {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = p.id;
+            document.getElementById('pName').value = p.name || '';
+            document.getElementById('pDescription').value = p.description || '';
+            document.getElementById('pPrice').value = p.price || '';
+            document.getElementById('pOfferPrice').value = p.offer_price || '';
+            // Restore checkboxes and extra tags from saved category_tags
+            const savedTags = (p.category_tags || '').split('|').map(t => t.trim()).filter(t => t);
+            const knownCats = ['colchones', 'bases', 'almohadas', 'sillones', 'sofas', 'cabeceros', 'mesitas', 'destacado_flex'];
+            document.querySelectorAll('input[name="cat"]').forEach(cb => {
+                cb.checked = savedTags.includes(cb.value);
+            });
+            const extras = savedTags.filter(t => !knownCats.includes(t));
+            document.getElementById('pExtraTags').value = extras.join('|');
+            document.getElementById('pImageUrl').value = p.image_url || '';
+
+            if (p.image_url) {
+                document.getElementById('imagePreview').src = p.image_url;
+                document.getElementById('imagePreviewBox').style.display = 'block';
+            }
+
+            document.getElementById('modalTitle').innerText = 'Editar Producto';
+            openModal(false);
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('¿Seguro que quieres eliminar este producto?')) return;
+            try {
+                const { error } = await sb.from('products').delete().eq('id', id);
+                if (error) throw error;
+                sessionStorage.removeItem('dormi_products_cache'); // invalidate public cache
+                await loadProducts();
+            } catch (err) {
+                alert('Error al eliminar: ' + err.message);
+            }
+        }
+
+        // 8. Eventos
+        document.addEventListener('DOMContentLoaded', () => {
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('isAdminDormi');
+                window.location.href = 'login.html';
+            });
+
+            // Nuevo producto btn
+            document.getElementById('newProductBtn').addEventListener('click', openModal);
+
+            // Cerrar modal
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            document.getElementById('productModal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+
+            // Preview imagen
+            document.getElementById('pImageFile').addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('imagePreviewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Búsqueda
+            document.getElementById('searchProducts').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = products.filter(p =>
+                    (p.name || '').toLowerCase().includes(term) ||
+                    (p.category_tags || '').toLowerCase().includes(term) ||
+                    (p.description || '').toLowerCase().includes(term)
+                );
+                renderProducts(filtered);
+            });
+
+            // Guardar producto
+            document.getElementById('productForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('saveBtn');
+                btn.disabled = true;
+                btn.innerText = 'Guardando...';
+
+                try {
+                    const id = document.getElementById('productId').value;
+                    const file = document.getElementById('pImageFile').files[0];
+                    let imageUrl = document.getElementById('pImageUrl').value;
+
+                    // Subir imagen si se seleccionó una
+                    if (file) {
+                        const ext = file.name.split('.').pop();
+                        const fileName = `producto_${Date.now()}.${ext}`;
+                        const { error: uploadErr } = await sb.storage.from('products').upload(fileName, file, { upsert: true });
+                        if (uploadErr) {
+                            // Si no hay bucket de storage, usamos base64 como fallback
+                            console.warn('Storage error, usando base64:', uploadErr.message);
+                            imageUrl = await fileToBase64(file);
+                        } else {
+                            const { data: urlData } = sb.storage.from('products').getPublicUrl(fileName);
+                            imageUrl = urlData.publicUrl;
+                        }
+                    }
+
+                    // Build category_tags from checkboxes + extra tags (always lowercase to avoid case mismatch)
+                    const checkedCats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(cb => cb.value.toLowerCase());
+                    const extraTags = document.getElementById('pExtraTags').value.trim().split('|').map(t => t.trim().toLowerCase()).filter(t => t);
+                    const allTags = [...checkedCats, ...extraTags];
+
+                    const payload = {
+                        name: document.getElementById('pName').value.trim(),
+                        description: document.getElementById('pDescription').value.trim(),
+                        price: document.getElementById('pPrice').value
+                            ? parseFloat(document.getElementById('pPrice').value)
+                            : null,
+                        offer_price: document.getElementById('pOfferPrice').value
+                            ? parseFloat(document.getElementById('pOfferPrice').value)
+                            : null,
+                        category_tags: allTags.join('|'),
+                        image_url: imageUrl || null
+                    };
+
+                    let result;
+                    if (id) {
+                        result = await sb.from('products').update(payload).eq('id', parseInt(id));
+                    } else {
+                        result = await sb.from('products').insert([payload]);
+                    }
+
+                    if (result.error) throw result.error;
+
+                    sessionStorage.removeItem('dormi_products_cache'); // invalidate public cache
+                    closeModal();
+                    await loadProducts();
+
+                } catch (err) {
+                    console.error('[Admin] Error guardando producto:', err);
+                    alert('Error al guardar: ' + err.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = 'Guardar';
+                }
+            });
+
+            // Iniciar Supabase y cargar datos
+            waitForSupabase(() => loadProducts());
+        });
+
+        function fileToBase64(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function saveSettings() {
+            const year = document.getElementById('catalogYear').value;
+            localStorage.setItem('dormi_catalog_year', year);
+            alert('Ajustes guardados.');
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</body>
+
+</html>
